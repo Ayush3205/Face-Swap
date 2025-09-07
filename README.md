@@ -64,8 +64,6 @@ MONGODB_URI=mongodb+srv://your-username:your-password@cluster0.mongodb.net/faces
 REMAKER_API_KEY=your-remaker-api-key-here
 REMAKER_API_URL=https://api.remaker.ai/v1/face-swap
 
-# Security Configuration
-SESSION_SECRET=your-super-secret-session-key-here
 ```
 
 ### 4. Create Upload Directories
