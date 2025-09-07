@@ -1,0 +1,50 @@
+
+
+<div class="container">
+    <div class="error-container">
+        <div class="error-content">
+            <h1 class="error-title"><%= error %></h1>
+            <p class="error-message"><%= message %></p>
+            
+            <div class="error-actions">
+                <a href="/" class="btn btn-primary">Go to Form</a>
+                <a href="/submissions" class="btn btn-secondary">View Submissions</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-container {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.error-content {
+    background: white;
+    padding: 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.error-title {
+    color: #dc3545;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.error-message {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+</style>

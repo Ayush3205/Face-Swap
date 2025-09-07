@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Form App' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-brand">
+                <a href="/">FormApp</a>
+            </h1>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Submit Form</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/submissions" class="nav-link">View Submissions</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <%- body %>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <p>&copy; 2024 FormApp. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>

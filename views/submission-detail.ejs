@@ -1,0 +1,89 @@
+
+<div class="container">
+    <div class="detail-container">
+        <div class="detail-header">
+            <h1 class="detail-title">Submission Details</h1>
+            <a href="/submissions" class="btn btn-secondary">← Back to All Submissions</a>
+        </div>
+
+        <div class="detail-content">
+            <div class="detail-info">
+                <h2>Personal Information</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Name:</strong>
+                        <span><%= submission.name %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Email:</strong>
+                        <span><%= submission.email %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Phone:</strong>
+                        <span><%= submission.phone %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Terms Accepted:</strong>
+                        <span><%= submission.termsAccepted ? 'Yes' : 'No' %></span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Submitted On:</strong>
+                        <span><%= submission.createdAt %></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-images">
+                <h2>Images</h2>
+                <div class="images-grid">
+                    <% if (submission.originalImagePath) { %>
+                        <div class="image-detail">
+                            <h3>Original Image</h3>
+                            <div class="image-container">
+                                <img src="<%= submission.originalImagePath %>" alt="Original Image" class="detail-image">
+                            </div>
+                            <div class="image-actions">
+                                <a href="<%= submission.originalImagePath %>" target="_blank" class="btn btn-secondary">
+                                    🔍 View Full Size
+                                </a>
+                                <a href="/submissions/<%= submission.id %>/download/original" class="btn btn-download">
+                                    📥 Download Original
+                                </a>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <% if (submission.swappedImagePath) { %>
+                        <div class="image-detail">
+                            <h3>Face Swapped Image</h3>
+                            <div class="image-container">
+                                <img src="<%= submission.swappedImagePath %>" alt="Swapped Image" class="detail-image">
+                            </div>
+                            <div class="image-actions">
+                                <a href="<%= submission.swappedImagePath %>" target="_blank" class="btn btn-secondary">
+                                    🔍 View Full Size
+                                </a>
+                                <a href="/submissions/<%= submission.id %>/download/swapped" class="btn btn-primary">
+                                    📥 Download Swapped
+                                </a>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="image-detail">
+                            <h3>Face Swapped Image</h3>
+                            <div class="no-image-detail">
+                                <p>Face swap processing failed or image not available</p>
+                                <small>The original image was uploaded but face swap could not be completed</small>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-actions">
+            <a href="/submissions" class="btn btn-secondary">← Back to All Submissions</a>
+            <a href="/" class="btn btn-primary">Submit New Form</a>
+        </div>
+    </div>
+</div>

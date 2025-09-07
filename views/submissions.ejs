@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submissions List</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-exchange-alt me-2"></i>
+                Face Swap App
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-upload me-1"></i>
+                            Submit
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/submissions">
+                            <i class="fas fa-list me-1"></i>
+                            View Submissions
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container my-4">
+        <!-- Alert Messages -->
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+
+        <!-- Page Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="display-5 mb-2">
+                    <i class="fas fa-images text-primary"></i>
+                    All Submissions
+                </h1>
+                <p class="text-muted">
+                    <%if (typeof pagination !== 'undefined' && pagination.totalCount > 0) { %>
+                        Showing <%= ((pagination.currentPage - 1) * 10) + 1 %>-<%= Math.min(pagination.currentPage * 10, pagination.totalCount) %> of <%= pagination.totalCount %> submissions
+                    <% } else { %>
+                        No submissions found
+                    <% } %>
+                </p>
+            </div>
+            <div>
+                <a href="/" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>
+                    New Submission
+                </a>
+            </div>
+        </div>
+
+        <% if (typeof submissions !== 'undefined' && submissions.length > 0) { %>
+            <!-- Submissions Grid -->
+            <div class="row">
+                <% submissions.forEach(function(submission) { %>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            <!-- Original Image -->
+                            <div class="position-relative">
+                                <img src="<%= submission.originalImageUrl %>" 
+                                     class="card-img-top" 
+                                     alt="Original Image"
+                                     style="height: 200px; object-fit: cover;"
+                                     onerror="this.src='/images/placeholder.jpg'">
+                                <div class="position-absolute top-0 end-0 m-2">
+                                    <span class="badge bg-primary">
+                                        <i class="fas fa-camera me-1"></i>
+                                        Original
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <!-- User Information -->
+                                <h5 class="card-title">
+                                    <i class="fas fa-user me-1"></i>
+                                    <%= submission.name %>
+                                </h5>
+                                
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-envelope me-1"></i>
+                                        <%= submission.email %>
+                                    </small>
+                                </div>
+                                
+                                <div class="mb-2">
+                                    <small class="text-muted">
+                                        <i class="fas fa-phone me-1"></i>
+                                        <%= submission.phone %>
+                                    </small>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="fas fa-calendar me-1"></i>
+                                        Submitted: <%= submission.createdAt %>
+                                    </small>
+                                </div>
+
+                                <!-- Swapped Image Preview -->
+                                <div class="mb-3">
+                                    <h6 class="text-success">
+                                        <i class="fas fa-magic me-1"></i>
+                                        Face Swapped Result:
+                                    </h6>
+                                    <img src="<%= submission.swappedImageUrl %>" 
+                                         class="img-fluid rounded" 
+                                         alt="Face Swapped Image"
+                                         style="max-height: 150px; width: 100%; object-fit: cover;"
+                                         onerror="this.src='/images/placeholder.jpg'">
+                                </div>
+                            </div>
+
+                            <!-- Card Footer with Actions -->
+                            <div class="card-footer bg-light">
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <a href="<%= submission.downloadUrl %>" 
+                                           class="btn btn-success btn-sm w-100"
+                                           download>
+                                            <i class="fas fa-download me-1"></i>
+                                            Download
+                                        </a>
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" 
+                                                class="btn btn-info btn-sm w-100" 
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#detailModal<%= submission._id %>">
+                                            <i class="fas fa-eye me-1"></i>
+                                            Details
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detail Modal for each submission -->
+                    <div class="modal fade" id="detailModal<%= submission._id %>" tabindex="-1">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">
+                                        <i class="fas fa-info-circle me-2"></i>
+                                        Submission Details
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <!-- User Information -->
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">User Information</h6>
+                                            <p><strong>Name:</strong> <%= submission.name %></p>
+                                            <p><strong>Email:</strong> <%= submission.email %></p>
+                                            <p><strong>Phone:</strong> <%= submission.phone %></p>
+                                            <p><strong>Submitted:</strong> <%= submission.createdAt %></p>
+                                        </div>
+                                        
+                                        <!-- Processing Information -->
+                                        <div class="col-md-6">
+                                            <h6 class="border-bottom pb-2 mb-3">Processing Info</h6>
+                                            <p><strong>Status:</strong> 
+                                                <span class="badge bg-success">Completed</span>
+                                            </p>
+                                            <p><strong>Processing Time:</strong> ~2 seconds</p>
+                                            <p><strong>File Format:</strong> 
+                                                <%= submission.originalImage && submission.originalImage.mimetype ? submission.originalImage.mimetype : 'image/jpeg' %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Image Comparison -->
+                                    <div class="row mt-4">
+                                        <div class="col-md-6 text-center">
+                                            <h6>Original Image</h6>
+                                            <img src="<%= submission.originalImageUrl %>" 
+                                                 class="img-fluid rounded border" 
+                                                 alt="Original"
+                                                 style="max-height: 200px;">
+                                        </div>
+                                        <div class="col-md-6 text-center">
+                                            <h6>Face Swapped Result</h6>
+                                            <img src="<%= submission.swappedImageUrl %>" 
+                                                 class="img-fluid rounded border" 
+                                                 alt="Face Swapped"
+                                                 style="max-height: 200px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="<%= submission.downloadUrl %>" 
+                                       class="btn btn-success" 
+                                       download>
+                                        <i class="fas fa-download me-1"></i>
+                                        Download Result
+                                    </a>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        Close
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+
+            <!-- Pagination -->
+            <% if (typeof pagination !== 'undefined' && pagination.totalPages > 1) { %>
+                <nav aria-label="Submissions pagination" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- Previous Page -->
+                        <% if (pagination.hasPrev) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/submissions?page=<%= pagination.prevPage %>">
+                                    <i class="fas fa-chevron-left me-1"></i>
+                                    Previous
+                                </a>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="fas fa-chevron-left me-1"></i>
+                                    Previous
+                                </span>
+                            </li>
+                        <% } %>
+
+                        <!-- Page Numbers -->
+                        <% 
+                        const startPage = Math.max(1, pagination.currentPage - 2);
+                        const endPage = Math.min(pagination.totalPages, pagination.currentPage + 2);
+                        %>
+                        
+                        <% if (startPage > 1) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/submissions?page=1">1</a>
+                            </li>
+                            <% if (startPage > 2) { %>
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            <% } %>
+                        <% } %>
+
+                        <% for (let i = startPage; i <= endPage; i++) { %>
+                            <% if (i === pagination.currentPage) { %>
+                                <li class="page-item active">
+                                    <span class="page-link"><%= i %></span>
+                                </li>
+                            <% } else { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="/submissions?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                        <% } %>
+
+                        <% if (endPage < pagination.totalPages) { %>
+                            <% if (endPage < pagination.totalPages - 1) { %>
+                                <li class="page-item disabled">
+                                    <span class="page-link">...</span>
+                                </li>
+                            <% } %>
+                            <li class="page-item">
+                                <a class="page-link" href="/submissions?page=<%= pagination.totalPages %>"><%= pagination.totalPages %></a>
+                            </li>
+                        <% } %>
+
+                        <!-- Next Page -->
+                        <% if (pagination.hasNext) { %>
+                            <li class="page-item">
+                                <a class="page-link" href="/submissions?page=<%= pagination.nextPage %>">
+                                    Next
+                                    <i class="fas fa-chevron-right ms-1"></i>
+                                </a>
+                            </li>
+                        <% } else { %>
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    Next
+                                    <i class="fas fa-chevron-right ms-1"></i>
+                                </span>
+                            </li>
+                        <% } %>
+                    </ul>
+                </nav>
+            <% } %>
+
+        <% } else { %>
+            <!-- Empty State -->
+            <div class="text-center py-5">
+                <div class="mb-4">
+                    <i class="fas fa-inbox fa-5x text-muted"></i>
+                </div>
+                <h3 class="text-muted mb-3">No Submissions Yet</h3>
+                <p class="text-muted mb-4">
+                    Be the first to submit your photo for a face swap!
+                </p>
+                <a href="/" class="btn btn-primary btn-lg">
+                    <i class="fas fa-upload me-2"></i>
+                    Submit Your Photo
+                </a>
+            </div>
+        <% } %>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="text-muted">Face Swap Application</h6>
+                    <p class="text-muted small">
+                        View and download all processed face swap results.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="text-muted small">
+                        <i class="fas fa-shield-alt me-1"></i>
+                        All submissions are processed securely and privately.
+                    </p>
+                </div>
+            </div>
+            <hr class="text-muted">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p class="text-muted small mb-0">
+                        © <%= new Date().getFullYear() %> Face Swap App. All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert-dismissible');
+            alerts.forEach(function(alert) {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
+        // Lazy loading for images
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img[data-src]');
+            
+            if ('IntersectionObserver' in window) {
+                const imageObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            const img = entry.target;
+                            img.src = img.dataset.src;
+                            img.classList.remove('lazy');
+                            imageObserver.unobserve(img);
+                        }
+                    });
+                });
+
+                images.forEach(function(img) {
+                    imageObserver.observe(img);
+                });
+            } else {
+                // Fallback for older browsers
+                images.forEach(function(img) {
+                    img.src = img.dataset.src;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
